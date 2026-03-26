@@ -8,18 +8,22 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+
+	"github.com/kfilipovski/swims/internal/config"
 )
 
 const apiURL = "https://usaswimming.sisense.com/api/datasources"
 
 type Client struct {
 	httpClient *http.Client
+	config     *config.Manager
 	mu         sync.Mutex
 	auth       *authState
+	loadedAuth bool
 }
 
-func NewClient() *Client {
-	return &Client{httpClient: &http.Client{}}
+func NewClient(cfg *config.Manager) *Client {
+	return &Client{httpClient: &http.Client{}, config: cfg}
 }
 
 func (c *Client) query(datasource string, metadata []JaqlMetadata) (*JaqlResponse, error) {
@@ -90,11 +94,30 @@ func (c *Client) token(forceRefresh bool) (string, error) {
 	if !forceRefresh && c.auth != nil && c.auth.Token != "" {
 		return c.auth.Token, nil
 	}
+	if !forceRefresh && !c.loadedAuth {
+		c.loadedAuth = true
+		if c.config != nil {
+			session, err := c.config.LoadSession()
+			if err != nil {
+				return "", err
+			}
+			if session != nil {
+				c.auth = &authState{Token: session.Token, DeviceID: session.DeviceID, HostID: session.HostID}
+				return c.auth.Token, nil
+			}
+		}
+	}
 
 	state, err := refreshAuth(c.httpClient, c.auth)
 	if err != nil {
 		return "", err
 	}
 	c.auth = state
+	c.loadedAuth = true
+	if c.config != nil {
+		if err := c.config.SaveSession(&config.Session{Token: state.Token, DeviceID: state.DeviceID, HostID: state.HostID}); err != nil {
+			return "", err
+		}
+	}
 	return state.Token, nil
 }

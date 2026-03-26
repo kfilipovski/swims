@@ -1,39 +1,57 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/kfilipovski/swims/internal/config"
 	"github.com/kfilipovski/swims/internal/dolt"
 	"github.com/spf13/cobra"
 )
 
 var (
-	dataDir string
-	db      *dolt.Dolt
+	dataDir    string
+	configDir  string
+	db         *dolt.Dolt
+	cfgManager *config.Manager
+	appConfig  *config.AppConfig
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "swims",
 	Short: "USA Swimming Data Hub CLI with Dolt persistence",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		if dataDir == "" {
-			cwd, err := os.Getwd()
-			if err != nil {
-				return fmt.Errorf("getting working directory: %w", err)
-			}
-			dataDir = cwd
+		var err error
+		cfgManager, err = config.NewManager(configDir)
+		if err != nil {
+			return err
+		}
+		if err := cfgManager.EnsureDir(); err != nil {
+			return err
+		}
+		appConfig, err = cfgManager.Load()
+		if err != nil {
+			return err
 		}
 
-		dataDir, _ = filepath.Abs(dataDir)
+		if dataDir == "" {
+			dataDir = cfgManager.DataDir()
+		}
+
+		dataDir, err = filepath.Abs(dataDir)
+		if err != nil {
+			return err
+		}
 		db = dolt.New(dataDir)
 		return nil
 	},
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&dataDir, "data-dir", "", "path to dolt database directory (default: current directory)")
+	home, _ := os.UserHomeDir()
+	defaultConfigDir := filepath.Join(home, ".swims")
+	rootCmd.PersistentFlags().StringVar(&configDir, "config-dir", defaultConfigDir, "path to swims config directory")
+	rootCmd.PersistentFlags().StringVar(&dataDir, "data-dir", "", "path to dolt database directory (default: ~/.swims)")
 }
 
 func Execute() {

@@ -22,6 +22,9 @@ var syncSearchCmd = &cobra.Command{
 		last, _ := cmd.Flags().GetString("last")
 		club, _ := cmd.Flags().GetString("club")
 		saveAll, _ := cmd.Flags().GetBool("all")
+		if club == "" && appConfig != nil {
+			club = appConfig.DefaultClub
+		}
 
 		if first == "" && last == "" {
 			return fmt.Errorf("at least one of --first or --last is required")
@@ -36,7 +39,7 @@ var syncSearchCmd = &cobra.Command{
 			}
 		}
 
-		client := usas.NewClient()
+		client := usas.NewClient(cfgManager)
 		swimmers, err := client.SearchSwimmers(first, last)
 		if err != nil {
 			return err
@@ -177,7 +180,7 @@ func parseSelection(input string, max int) ([]int, error) {
 func init() {
 	syncSearchCmd.Flags().String("first", "", "first/preferred name (contains match)")
 	syncSearchCmd.Flags().String("last", "", "last name (contains match)")
-	syncSearchCmd.Flags().String("club", "", "filter results by club name (contains match)")
+	syncSearchCmd.Flags().String("club", "", "filter results by club name (contains match, default: config club)")
 	syncSearchCmd.Flags().Bool("all", false, "save all results without prompting")
 	syncCmd.AddCommand(syncSearchCmd)
 }

@@ -34,7 +34,7 @@ var syncTimesCmd = &cobra.Command{
 			eventCode = event + " " + course
 		}
 
-		client := usas.NewClient()
+		client := usas.NewClient(cfgManager)
 		ts := &store.TimeStore{DB: db}
 		ss := &store.SwimmerStore{DB: db}
 
