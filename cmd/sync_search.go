@@ -14,8 +14,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var syncSearchCmd = &cobra.Command{
+var swimmerCmd = &cobra.Command{
 	Use:   "swimmer",
+	Short: "Manage tracked swimmers",
+}
+
+var swimmerAddCmd = &cobra.Command{
+	Use:   "add",
 	Short: "Search USA Swimming for swimmers and save to local DB",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		first, _ := cmd.Flags().GetString("first")
@@ -178,9 +183,10 @@ func parseSelection(input string, max int) ([]int, error) {
 }
 
 func init() {
-	syncSearchCmd.Flags().String("first", "", "first/preferred name (contains match)")
-	syncSearchCmd.Flags().String("last", "", "last name (contains match)")
-	syncSearchCmd.Flags().String("club", "", "filter results by club name (contains match, default: config club)")
-	syncSearchCmd.Flags().Bool("all", false, "save all results without prompting")
-	syncCmd.AddCommand(syncSearchCmd)
+	swimmerAddCmd.Flags().String("first", "", "first/preferred name (contains match)")
+	swimmerAddCmd.Flags().String("last", "", "last name (contains match)")
+	swimmerAddCmd.Flags().String("club", "", "filter results by club name (contains match, default: config club)")
+	swimmerAddCmd.Flags().Bool("all", false, "save all results without prompting")
+	swimmerCmd.AddCommand(swimmerAddCmd)
+	rootCmd.AddCommand(swimmerCmd)
 }

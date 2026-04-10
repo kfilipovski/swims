@@ -26,7 +26,7 @@ go build -o swims .
 ### Search and track swimmers
 
 ```bash
-./swims sync search --first "Jane" --last "Doe"
+./swims swimmer add --first "Jane" --last "Doe"
 ./swims swimmers list
 ```
 
@@ -83,7 +83,7 @@ go build -o swims .
 
 ## How it works
 
-Data is fetched from the USA Swimming Data Hub's Sisense JAQL API and stored in four normalized Dolt tables: `swimmers`, `events`, `meets`, and `times`. All writes go through `sync` commands; query commands are read-only.
+Data is fetched from the USA Swimming Data Hub's Sisense JAQL API and stored in four normalized Dolt tables: `swimmers`, `events`, `meets`, and `times`. Swimmer adds and time syncs create Dolt commits; query commands are read-only.
 
 Since Dolt is a version-controlled database, every sync creates a commit — you get a full history of how your tracked swimmers' times change over time, with the ability to diff and branch just like git.
 

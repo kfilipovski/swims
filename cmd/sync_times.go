@@ -43,7 +43,7 @@ var syncTimesCmd = &cobra.Command{
 			return err
 		}
 		if len(swimmers) == 0 {
-			fmt.Println("No tracked swimmers. Run 'swims sync swimmer' first.")
+			fmt.Println("No tracked swimmers. Run 'swims swimmer add' first.")
 			return nil
 		}
 

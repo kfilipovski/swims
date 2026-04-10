@@ -26,7 +26,7 @@ var swimmersListCmd = &cobra.Command{
 		}
 
 		if len(swimmers) == 0 {
-			fmt.Println("No swimmers tracked. Run 'swims sync search' first.")
+			fmt.Println("No swimmers tracked. Run 'swims swimmer add' first.")
 			return nil
 		}
 
