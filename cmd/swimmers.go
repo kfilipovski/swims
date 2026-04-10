@@ -8,12 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var swimmersCmd = &cobra.Command{
-	Use:   "swimmers",
-	Short: "Manage tracked swimmers",
-}
-
-var swimmersListCmd = &cobra.Command{
+var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List tracked swimmers",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -26,7 +21,7 @@ var swimmersListCmd = &cobra.Command{
 		}
 
 		if len(swimmers) == 0 {
-			fmt.Println("No swimmers tracked. Run 'swims swimmer add' first.")
+			fmt.Println("No swimmers tracked. Run 'swims add' first.")
 			return nil
 		}
 
@@ -44,7 +39,6 @@ var swimmersListCmd = &cobra.Command{
 }
 
 func init() {
-	swimmersListCmd.Flags().String("lsc", "", "filter by LSC code")
-	swimmersCmd.AddCommand(swimmersListCmd)
-	rootCmd.AddCommand(swimmersCmd)
+	listCmd.Flags().String("lsc", "", "filter by LSC code")
+	rootCmd.AddCommand(listCmd)
 }

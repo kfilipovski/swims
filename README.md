@@ -26,8 +26,8 @@ go build -o swims .
 ### Search and track swimmers
 
 ```bash
-./swims swimmer add --first "Jane" --last "Doe"
-./swims swimmers list
+./swims add --first "Jane" --last "Doe"
+./swims list
 ```
 
 ### Sync times
