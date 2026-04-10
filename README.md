@@ -33,8 +33,8 @@ go build -o swims .
 ### Sync times
 
 ```bash
-./swims sync times --person-key 896236    # sync a specific swimmer
-./swims sync times --all                  # sync all tracked swimmers
+./swims sync Doe                          # sync matching tracked swimmer(s)
+./swims sync                              # sync all tracked swimmers
 ```
 
 ### Query times

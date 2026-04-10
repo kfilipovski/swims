@@ -12,8 +12,8 @@ A Go CLI (`swims`) for querying the USA Swimming Data Hub (Sisense JAQL API) and
 go build -o swims .
 ./swims init                                          # initialize dolt DB + schema
 ./swims add --first "Jane" --last "Doe"               # search & save swimmers
-./swims sync times --person-key 896236                # fetch & persist times
-./swims sync times --all                              # sync all tracked swimmers
+./swims sync Doe                                      # fetch & persist times for matching tracked swimmer(s)
+./swims sync                                          # sync all tracked swimmers
 ./swims list                                          # list tracked swimmers
 ./swims status                                        # show DB summary (counts)
 ./swims times Doe --course SCY                        # query times by swimmer name
@@ -49,7 +49,7 @@ internal/
 **Key design decisions**:
 - Dolt is accessed by shelling out to `dolt` CLI (`dolt sql -q "..." -r json`), not via go-mysql-driver
 - The `.dolt/` directory lives in the project root (gitignored)
-- `add` and `sync times` write data; `list`, `times`, and `status` are read-only
+- `add` and `sync` write data; `list`, `times`, and `status` are read-only
 - SQL queries are built with `fmt.Sprintf` and `sqlStr()` (single-quote escaping), not parameterized
 - Correlated subqueries don't work reliably in Dolt — best-time queries use JOIN with derived table instead
 - `REPLACE INTO` used for idempotent upserts; events/meets use `INSERT IGNORE`

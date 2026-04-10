@@ -10,8 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var syncTimesCmd = &cobra.Command{
-	Use:   "times [swimmer...]",
+var syncCmd = &cobra.Command{
+	Use:   "sync [swimmer...]",
 	Short: "Fetch swim times from USA Swimming and save to local DB",
 	Long:  "Fetch swim times. Arguments are swimmer names (case-insensitive match on tracked swimmers). If no swimmers specified, syncs all tracked swimmers.",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -111,9 +111,9 @@ func syncSwimmers(client *usas.Client, ts *store.TimeStore, ss *store.SwimmerSto
 }
 
 func init() {
-	syncTimesCmd.Flags().String("event", "", "optional event filter, e.g. '200 BR'")
-	syncTimesCmd.Flags().String("course", "SCY", "course (SCY, SCM, LCM)")
-	syncTimesCmd.Flags().String("since", "", "only fetch times after this date (YYYY-MM-DD), overrides last sync date")
-	syncTimesCmd.Flags().Bool("full", false, "ignore last sync date, fetch all times")
-	syncCmd.AddCommand(syncTimesCmd)
+	syncCmd.Flags().String("event", "", "optional event filter, e.g. '200 BR'")
+	syncCmd.Flags().String("course", "SCY", "course (SCY, SCM, LCM)")
+	syncCmd.Flags().String("since", "", "only fetch times after this date (YYYY-MM-DD), overrides last sync date")
+	syncCmd.Flags().Bool("full", false, "ignore last sync date, fetch all times")
+	rootCmd.AddCommand(syncCmd)
 }
